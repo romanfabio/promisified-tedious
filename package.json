@@ -1,0 +1,30 @@
+{
+  "name": "promisified-tedious",
+  "version": "1.0.0",
+  "description": "A promisified layer over Tedious package",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/romanfabio/promisified-tedious.git"
+  },
+  "keywords": [
+    "tedious",
+    "promise",
+    "sqlserver"
+  ],
+  "author": "Fabio Roman <romanfabio@protonmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/romanfabio/promisified-tedious/issues"
+  },
+  "homepage": "https://github.com/romanfabio/promisified-tedious#readme",
+  "dependencies": {
+    "tedious": "^14.3.0"
+  },
+  "devDependencies": {
+    "typescript": "^4.6.2"
+  }
+}
