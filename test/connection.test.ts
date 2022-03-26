@@ -1,4 +1,4 @@
-import Connection from "../src/index";
+import {Connection} from "../src/index";
 import config from "./config";
 
 test('the connection is created and then closed', async () => {

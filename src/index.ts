@@ -1,6 +1,6 @@
 import * as tedious from 'tedious';
 
-export default class Connection {
+export class Connection {
     private config : tedious.ConnectionConfig;
     private connection : tedious.Connection;
 
