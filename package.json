@@ -15,7 +15,7 @@
     "promise",
     "sqlserver"
   ],
-  "author": "Fabio Roman <romanfabio@protonmail.com>",
+  "author": "mrvoid",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/romanfabio/promisified-tedious/issues"
