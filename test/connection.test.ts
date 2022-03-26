@@ -1,5 +1,7 @@
-import {Connection, ISOLATION_LEVEL} from "../src/index";
+import {Connection, ISOLATION_LEVEL, Request, TYPES} from "../src/index";
 import config from "./config";
+
+jest.setTimeout(20000)
 
 test('the connection is created and then closed', async () => {
     const conn = new Connection(config);
@@ -35,6 +37,37 @@ test('the connections begins and rollbacks a transaction', async () => {
     await conn.beginTransaction('', ISOLATION_LEVEL.READ_UNCOMMITTED);
 
     await conn.rollbackTransaction('');
-    
+
     await conn.close();
+});
+
+test('the query returns 1 result', async () => {
+
+    const conn = new Connection(config);
+
+    await conn.connect();
+
+    const request = new Request('SELECT TOP(1) * FROM [void].[dbo].[users]');
+
+    const result = await conn.execSql(request);
+
+    await conn.close();
+
+    expect(result.length).toBe(1);
+});
+
+test('the query has 2 parameters', async () => {
+    const conn = new Connection(config);
+
+    await conn.connect();
+
+    const request = new Request('SELECT TOP(1) * FROM [void].[dbo].[users] WHERE [username] = @u AND [password] = @p');
+    request.addParameter('u', TYPES.VarChar, 'admin', {length: 100});
+    request.addParameter('p', TYPES.VarChar, 'qwerty123', {length: 100});
+
+    const result = await conn.execSql(request);
+
+    await conn.close();
+
+    expect(result.length).toBe(1);
 });
