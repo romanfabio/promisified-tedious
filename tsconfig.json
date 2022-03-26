@@ -2,7 +2,11 @@
   "compilerOptions": {
     "outDir": "dist",
     "lib": ["ES2016"],
-    "sourceMap": true
+    "sourceMap": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "declaration": true,
+    "moduleResolution": "node"
   },
   "include": [
     "src/**/*.ts"
