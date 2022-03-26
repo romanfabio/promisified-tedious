@@ -3,11 +3,9 @@ import * as tedious from 'tedious';
 export class Connection {
     private config : tedious.ConnectionConfig;
     private connection : tedious.Connection;
-    private connected : boolean;
 
     constructor(config: tedious.ConnectionConfig) {
         this.config = config;
-        this.connected = false;
         
         if(config.options === undefined)
             config.options = {};
@@ -18,13 +16,11 @@ export class Connection {
 
     public async connect() : Promise<void> {
         const self = this;
-        this.connection.on('end', () => { self.connected = false; });
         return new Promise((resolve, reject) => {
             self.connection.connect((err) => {
                 if(err)
                     reject(err);
                 else {
-                    self.connected = true;
                     resolve();
                 }
             });
@@ -35,7 +31,6 @@ export class Connection {
         const self = this;
         return new Promise((resolve, reject) => {
             self.connection.on('end', () => {
-                self.connected = false;
                 resolve();
             });
 
@@ -43,7 +38,16 @@ export class Connection {
         });
     }
 
-    public isConnected() : boolean {
-        return this.connected;
+    public async reset() : Promise<void> {
+        const self = this;
+        return new Promise((resolve, reject) => {
+            self.connection.reset((err) => {
+                if(err)
+                    reject(err);
+                else {
+                    resolve();
+                }
+            });
+        });
     }
 }
