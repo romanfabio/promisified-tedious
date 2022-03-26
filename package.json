@@ -1,6 +1,6 @@
 {
   "name": "promisified-tedious",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "A promisified layer over Tedious package",
   "main": "dist/index.js",
   "scripts": {
