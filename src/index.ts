@@ -151,19 +151,14 @@ export interface ParameterOptions {
     scale?: number;
 }
 
-export interface ParameterType {
-    name: string;
-    type: string;
-}
-
 export class Request {
     private request: tedious.Request;
 
-    constructor(sql: string) {
-        this.request = new tedious.Request(sql, () =>{});
+    constructor(sqlTextOrProcedure: string | undefined) {
+        this.request = new tedious.Request(sqlTextOrProcedure, () =>{});
     }
 
-    public addParameter(name: string, type: ParameterType, value: any, options?: ParameterOptions) {
+    public addParameter(name: string, type: any, value?: unknown, options?: Readonly<ParameterOptions> | null) {
         this.request.addParameter(name, type, value, options);
     }
 }
