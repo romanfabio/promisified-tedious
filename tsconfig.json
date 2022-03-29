@@ -3,7 +3,7 @@
     "outDir": "dist",
     "lib": ["ES2016"],
     "sourceMap": true,
-    "strict": true,
+    "strict": false,
     "esModuleInterop": true,
     "declaration": true,
     "moduleResolution": "node"
