@@ -71,3 +71,18 @@ test('the query has 2 parameters', async () => {
 
     expect(result.length).toBe(1);
 });
+
+test('the query returns 1 result with execSqlBatch', async () => {
+
+    const conn = new Connection(config);
+
+    await conn.connect();
+
+    const request = new Request('SELECT TOP(1) * FROM [void].[dbo].[users]');
+
+    const result = await conn.execSqlBatch(request);
+
+    await conn.close();
+
+    expect(result.length).toBe(1);
+});
