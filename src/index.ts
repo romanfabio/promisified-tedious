@@ -135,6 +135,17 @@ export class Connection {
             self.connection.execSqlBatch(raw);
         });
     }
+
+    public callProcedure(request: Request) : Promise<any[]> {
+        const self = this;
+        const raw = (request as any).request;
+        return new Promise((resolve, reject) => {
+            raw.userCallback = (err: Error, rc: number, rows: any[]) => { if (err) reject(err); else resolve(rows); }
+            raw.callback = requestInternalCallback;
+
+            self.connection.callProcedure(raw);
+        });
+    }
 }
 
 const requestInternalCallback = function (err: Error | undefined | null, rowCount?: number, rows?: any) {

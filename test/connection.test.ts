@@ -86,3 +86,18 @@ test('the query returns 1 result with execSqlBatch', async () => {
 
     expect(result.length).toBe(1);
 });
+
+test('the procedure returns 1 result', async () => {
+
+    const conn = new Connection(config);
+
+    await conn.connect();
+
+    const request = new Request('[void].[dbo].[get_default]');
+
+    const result = await conn.callProcedure(request);
+
+    await conn.close();
+
+    expect(result.length).toBe(1);
+});
