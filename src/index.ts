@@ -62,7 +62,7 @@ export class Connection {
         });
     }
 
-    public async beginTransaction(name?: string, isolationLevel?: ISOLATION_LEVEL): Promise<void> {
+    public async beginTransaction(name = '', isolationLevel?: ISOLATION_LEVEL): Promise<void> {
         const self = this;
         return new Promise((resolve, reject) => {
             self.connection.beginTransaction((err) => {
@@ -71,14 +71,14 @@ export class Connection {
                 else {
                     resolve();
                 }
-            }, name, isolationLevel as (tedious.ISOLATION_LEVEL | undefined))
+            }, name, (isolationLevel as unknown) as (tedious.ISOLATION_LEVEL))
         });
     }
 
-    public async commitTransaction(name?: string): Promise<void> {
+    public async commitTransaction(name = ''): Promise<void> {
         const self = this;
         return new Promise((resolve, reject) => {
-            (self.connection as any).commitTransaction((err : Error) => {
+            (self.connection as any).commitTransaction((err: Error) => {
                 if (err)
                     reject(err);
                 else {
@@ -88,10 +88,10 @@ export class Connection {
         });
     }
 
-    public async rollbackTransaction(name?: string) : Promise<void> {
+    public async rollbackTransaction(name = ''): Promise<void> {
         const self = this;
         return new Promise((resolve, reject) => {
-            (self.connection as any).rollbackTransaction((err : Error) => {
+            (self.connection as any).rollbackTransaction((err: Error) => {
                 if (err)
                     reject(err);
                 else {
@@ -101,10 +101,10 @@ export class Connection {
         });
     }
 
-    public async saveTransaction(name?: string) : Promise<void> {
+    public async saveTransaction(name: string): Promise<void> {
         const self = this;
         return new Promise((resolve, reject) => {
-            (self.connection as any).saveTransaction((err : Error) => {
+            (self.connection as any).saveTransaction((err: Error) => {
                 if (err)
                     reject(err);
                 else {
@@ -114,35 +114,31 @@ export class Connection {
         });
     }
 
-    public execSql(request: Request) : Promise<any[]> {
+    public execSql(request: Request): Promise<any[]> {
         const self = this;
         const raw = (request as any).request;
         return new Promise((resolve, reject) => {
-            raw.userCallback = (err: Error, rc: number, rows: any[]) => {
-                if(err)
-                    reject(err);
-                else
-                    resolve(rows);
-            }
-
-            raw.callback = function(err: Error | undefined | null, rowCount?: number, rows?: any) {
-                if (this.preparing) {
-                  this.preparing = false;
-                  if (err) {
-                    this.emit('error', err);
-                  } else {
-                    this.emit('prepared');
-                  }
-                } else {
-                  this.userCallback(err, rowCount, rows);
-                  this.emit('requestCompleted');
-                }
-            };
+            raw.userCallback = (err: Error, rc: number, rows: any[]) => { if (err) reject(err); else resolve(rows); }
+            raw.callback = requestInternalCallback;
 
             self.connection.execSql(raw);
         });
     }
 }
+
+const requestInternalCallback = function (err: Error | undefined | null, rowCount?: number, rows?: any) {
+    if (this.preparing) {
+        this.preparing = false;
+        if (err) {
+            this.emit('error', err);
+        } else {
+            this.emit('prepared');
+        }
+    } else {
+        this.userCallback(err, rowCount, rows);
+        this.emit('requestCompleted');
+    }
+};
 
 export interface ParameterOptions {
     output?: boolean;
@@ -155,7 +151,7 @@ export class Request {
     private request: tedious.Request;
 
     constructor(sqlTextOrProcedure: string | undefined) {
-        this.request = new tedious.Request(sqlTextOrProcedure, () =>{});
+        this.request = new tedious.Request(sqlTextOrProcedure, () => { });
     }
 
     public addParameter(name: string, type: any, value?: unknown, options?: Readonly<ParameterOptions> | null) {
