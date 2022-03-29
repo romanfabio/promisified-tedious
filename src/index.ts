@@ -157,4 +157,8 @@ export class Request {
     public addParameter(name: string, type: any, value?: unknown, options?: Readonly<ParameterOptions> | null) {
         this.request.addParameter(name, type, value, options);
     }
+
+    public setTimeout(timeout?: number) {
+        this.request.setTimeout(timeout);
+    }
 }
