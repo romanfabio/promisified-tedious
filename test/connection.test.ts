@@ -120,3 +120,26 @@ test('the prepared statement returns 1 result', async() => {
 
     expect(result.length).toBe(1);
 });
+
+test('4 rows are inserted with a bulkload operation', async() => {
+    const conn = new Connection(config);
+
+    await conn.connect();
+
+    const bulk = conn.newBulkLoad('[void].[dbo].[users]', {keepNulls: true});
+    
+    bulk.addColumn('username', TYPES.VarChar, {nullable: false});
+    bulk.addColumn('password', TYPES.VarChar, {nullable: true});
+    
+    const time = + new Date();
+    const rows = await conn.execBulkLoad(bulk, [
+        {username: 'user1-' + time, password: 'pwd1'},
+        {username: 'user2-' + time, password: 'pwd2'},
+        {username: 'user3-' + time, password: 'pwd3'},
+        {username: 'user4-' + time, password: 'pwd4'}
+    ]);
+
+    await conn.close();
+
+    expect(rows).toBe(4);
+});

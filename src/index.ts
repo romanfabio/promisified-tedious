@@ -184,7 +184,42 @@ export class Connection {
             self.connection.execute(raw, parameters);
         });
     }
+
+    public newBulkLoad(table: string, options?: BulkLoadOptions) : BulkLoad {
+        const bulkLoad = new BulkLoad();
+        (bulkLoad as any).bulk = (this.connection as any).newBulkLoad(table, options, () => {});
+        return bulkLoad;
+    }
+
+    public execBulkLoad(bulkLoad: BulkLoad, rows?: AsyncIterable<unknown[] | { [columnName: string]: unknown }> | Iterable<unknown[] | { [columnName: string]: unknown }>) : Promise<number> {
+        const self = this;
+        const raw = (bulkLoad as any).bulk;
+        return new Promise((resolve, reject) => {
+            (raw.callback as BulkLoadCallback) = (err, rowCount?) => {
+                if(err)
+                    reject(err);
+                else
+                    resolve(rowCount);
+            };
+
+            (self.connection as any).execBulkLoad(raw, rows);
+        });
+    }
 }
+
+export interface BulkLoadOptions {
+  checkConstraints?: boolean | undefined;
+
+  fireTriggers?: boolean | undefined;
+
+  keepNulls?: boolean | undefined;
+
+  lockTable?: boolean | undefined;
+
+  order?: {[columnName: string]: 'ASC'|'DESC'} | undefined;
+}
+
+export type BulkLoadCallback = (err: Error | undefined | null, rowCount?: number) => void;
 
 const requestInternalCallback = function (err: Error | undefined | null, rowCount?: number, rows?: any) {
     if (this.preparing) {
@@ -220,5 +255,30 @@ export class Request {
 
     public setTimeout(timeout?: number) {
         this.request.setTimeout(timeout);
+    }
+}
+
+export interface ColumnOptions {
+    output?: boolean;
+    length?: number;
+    precision?: number;
+    scale?: number;
+    objName?: string;
+    nullable?: boolean;
+  }
+
+export class BulkLoad {
+    private bulk: tedious.BulkLoad;
+
+    public addColumn(name: string, type: any, options: ColumnOptions) {
+        this.bulk.addColumn(name, type, options as any);
+    }
+
+    public getTableCreationSql() : string {
+        return this.bulk.getTableCreationSql();
+    }
+
+    public setTimeout(timeout?: number) {
+        (this.bulk as any).setTimeout(timeout);
     }
 }
