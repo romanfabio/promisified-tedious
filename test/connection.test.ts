@@ -101,3 +101,22 @@ test('the procedure returns 1 result', async () => {
 
     expect(result.length).toBe(1);
 });
+
+test('the prepared statement returns 1 result', async() => {
+    const conn = new Connection(config);
+
+    await conn.connect();
+
+    const request = new Request('SELECT TOP(1) * FROM [void].[dbo].[users] WHERE [username] LIKE @user');
+    request.addParameter('user', TYPES.VarChar);
+
+    await conn.prepare(request);
+
+    const result = await conn.execute(request, {user: '%a%'});
+
+    conn.unprepare(request);
+
+    await conn.close();
+
+    expect(result.length).toBe(1);
+});

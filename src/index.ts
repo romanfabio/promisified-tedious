@@ -146,6 +146,37 @@ export class Connection {
             self.connection.callProcedure(raw);
         });
     }
+
+    public prepare(request: Request) : Promise<void> {
+        const self = this;
+        const raw = (request as any).request as tedious.Request;
+        return new Promise((resolve, reject) => {
+            const clean = () => {
+                raw.removeAllListeners('prepared').removeAllListeners('error');
+            }
+
+            raw.on('prepared', () => {clean(); resolve()});
+            raw.on('error', (err) => {clean(); reject(err)});
+            
+            self.connection.prepare(raw);
+        });
+    }
+
+    public unprepare(request: Request) {
+        const raw = (request as any).request;
+        this.connection.unprepare(raw);
+    }
+
+    public execute(request: Request, parameters?: { [key: string]: unknown }) : Promise<any[]> {
+        const self = this;
+        const raw = (request as any).request;
+        return new Promise((resolve, reject) => {
+            raw.userCallback = (err: Error, rc: number, rows: any[]) => { if (err) reject(err); else resolve(rows); }
+            raw.callback = requestInternalCallback;
+
+            self.connection.execute(raw, parameters);
+        });
+    }
 }
 
 const requestInternalCallback = function (err: Error | undefined | null, rowCount?: number, rows?: any) {
