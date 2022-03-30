@@ -41,8 +41,15 @@ export class Connection {
     public async close(): Promise<void> {
         const self = this;
         return new Promise((resolve, reject) => {
+            const clean = () => {
+                self.connection.removeAllListeners('end').removeAllListeners('error');
+            }
+            
             self.connection.on('end', () => {
-                resolve();
+                clean(); resolve();
+            });
+            self.connection.on('error', (err) => {
+                clean(); reject(err);
             });
 
             self.connection.close();
