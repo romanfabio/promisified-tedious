@@ -36,7 +36,7 @@ async function getUser(username) {
 npm i promisified-tedious
 ```
 ## Version
-Version `0.5.0` uses `tedious@14.3.0` 
+Version `0.5.x` uses `tedious@14.3.x` 
 
 ## Documentation
 This package tries to provide the same interface as the Tedious package.
