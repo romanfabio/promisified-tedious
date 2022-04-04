@@ -35,6 +35,8 @@ async function getUser(username) {
 ```javascript 
 npm i promisified-tedious
 ```
+## Version
+Version `0.5.0` uses `tedious@14.3.0` 
 
 ## Documentation
 This package tries to provide the same interface as the Tedious package.
@@ -89,4 +91,4 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-[More](https://github.com/tediousjs/tedious/blob/master/LICENSE)
+[more details about the license](https://github.com/tediousjs/tedious/blob/master/LICENSE)
